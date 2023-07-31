@@ -14,8 +14,8 @@ if __name__ == '__main__':
 
 	inputFilePath = sys.argv[1]
 	outputFilePath = sys.argv[2]
-	code_espg_in = sys.argv[3]
-	code_espg_out = sys.argv[4]
+	code_espg_in = int(sys.argv[3])
+	code_espg_out = int(sys.argv[4])
 
 	transformer = Transformer.from_crs(code_espg_in, code_espg_out)
 	with open(inputFilePath, 'r') as filein:
