@@ -5,15 +5,15 @@
 import argparse
 import numpy as np
 from pyproj import Transformer
-import sys, os
+import sys, os, csv
+import fileinput
 
 def is_header(line:str, delimiter:str):
 	values = line.split(delimiter)
 	try:
-		if len(values) == 3:
-			lat = values[0]
-			lon = values[1]
-			z = values[2]
+		lat = float(values[0])
+		lon = float(values[1])
+		z = float(values[2])
 	
 	except ValueError:
 		return True
@@ -23,7 +23,7 @@ def is_header(line:str, delimiter:str):
 
 
 parser=argparse.ArgumentParser(description="change coordinate system".format(os.linesep))
-parser.add_argument("inputFilePath", type=str)
+parser.add_argument("inputFilePath", type=str, nargs='*', help='files to read, if empty, stdin is used')
 parser.add_argument("--delim", type=str)
 parser.add_argument("--latPos", type=int)
 parser.add_argument("--longPos", type=int)
@@ -32,6 +32,10 @@ parser.add_argument("epsg_in", type=int)
 parser.add_argument("epsg_out", type=int)
 
 args = parser.parse_args()
+
+if len(args.inputFilePath) > 1:
+	sys.stderr.write("Only one file can be specyfied{}".format(os.linesep))
+	sys.exit(1)
 
 inputFilePath = args.inputFilePath
 delimiter = args.delim
@@ -54,15 +58,12 @@ if depthPos == None:
 	depthPos = 2
 
 transformer = Transformer.from_crs(code_epsg_in, code_epsg_out)
-with open(inputFilePath, 'r') as filein:
-	line = filein.readline()
+for line in fileinput.input(inputFilePath):
 	if is_header(line, delimiter):
-		line = filein.readline()
-	
-	while line != '':
-		line = line.split(delimiter)
-		line[0] = float(line[latPos])
-		line[1] = float(line[longPos])
-		line[0], line[1] = transformer.transform(line[0], line[1])
-		sys.stdout.write("{}{}{}{}{}".format(line[latPos], delimiter, line[longPos], delimiter, line[depthPos]))
-		line = filein.readline()
+		continue;
+	line = line.split(delimiter)
+	line[0] = float(line[latPos])
+	line[1] = float(line[longPos])
+	line[2] = float(line[depthPos])
+	line[latPos], line[longPos] = transformer.transform(line[latPos], line[longPos])
+	sys.stdout.write("{}{}{}{}{}{}".format(line[latPos], delimiter, line[longPos], delimiter, line[depthPos], os.linesep))
