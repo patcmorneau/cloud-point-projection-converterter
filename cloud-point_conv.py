@@ -3,9 +3,8 @@
 # Copyright 2022 © Centre Interdisciplinaire de développement en Cartographie des Océans (CIDCO), Tous droits réservés
 
 import argparse
-import numpy as np
 from pyproj import Transformer
-import sys, os, csv
+import sys, os
 import fileinput
 
 def is_header(line:str, delimiter:str):
