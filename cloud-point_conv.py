@@ -22,11 +22,11 @@ def is_header(line:str, delimiter:str):
 
 
 parser=argparse.ArgumentParser(description="change coordinate system".format(os.linesep))
-parser.add_argument("inputFilePath", type=str, nargs='*', help='files to read, if empty, stdin is used')
-parser.add_argument("--delim", type=str)
-parser.add_argument("--latPos", type=int)
-parser.add_argument("--longPos", type=int)
-parser.add_argument("--depthPos", type=int)
+parser.add_argument("inputFilePath", type=str, nargs='*', help='file to read, if empty, stdin is used')
+parser.add_argument("--delim", type=str, default=" ")
+parser.add_argument("--latPos", type=int, default=0)
+parser.add_argument("--longPos", type=int, default=1)
+parser.add_argument("--depthPos", type=int, default=2)
 parser.add_argument("epsg_in", type=int)
 parser.add_argument("epsg_out", type=int)
 
@@ -44,17 +44,6 @@ latPos = args.latPos
 longPos = args.longPos
 depthPos = args.depthPos
 
-if delimiter == None:
-	delimiter = " "
-
-if latPos == None:
-	latPos = 0
-
-if longPos == None:
-	longPos = 1
-
-if depthPos == None:
-	depthPos = 2
 
 transformer = Transformer.from_crs(code_epsg_in, code_epsg_out)
 for line in fileinput.input(inputFilePath):
