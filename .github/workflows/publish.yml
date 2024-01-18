@@ -1,0 +1,43 @@
+name: Package Application with Pyinstaller
+
+on:
+  push:
+    tags:
+      - '*'
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Package Application
+      uses: JackMcKew/pyinstaller-action-windows@python3-10-pyinstaller-5-3
+      with:
+        path: src
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: cppc
+        path: src/dist/windows
+    
+
+  release:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+        
+      needs: build
+
+      steps: 
+        - uses: actions/download-artifact@v3
+          with:
+            name: cppc
+            path: download
+        - run: zip -r cppc.zip download/
+        - uses: ncipollo/release-action@v1
+          with:
+            artifacts: "cppc.zip"
