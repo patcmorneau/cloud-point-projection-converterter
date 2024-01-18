@@ -25,5 +25,5 @@ jobs:
         path: src/dist/windows
     
     - uses: ncipollo/release-action@v1
-          with:
-            artifacts: "cppc.zip"
+      with:
+        artifacts: "cppc.zip"
