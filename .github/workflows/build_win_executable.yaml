@@ -24,6 +24,20 @@ jobs:
         name: cppc
         path: src/dist/windows
     
-    - uses: ncipollo/release-action@v1
-      with:
-        artifacts: "cppc.zip"
+
+  release:
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+        
+      needs: build
+
+      steps: 
+        - uses: actions/download-artifact@v3
+          with:
+            name: cppc
+            path: download
+        - run: zip -r cppc.zip download/
+        - uses: ncipollo/release-action@v1
+          with:
+            artifacts: "cppc.zip"
